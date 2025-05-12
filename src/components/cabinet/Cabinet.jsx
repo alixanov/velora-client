@@ -174,17 +174,7 @@ const Cabinet = () => {
 
   return (
     <CabinetContainer>
-      <Navbar position="static">
-        <NavbarContent>
-          <IconButton edge="start" color="inherit" aria-label="menu">
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" style={{ color: '#fff', fontFamily: 'Lora, serif' }}>
-            Shukurullo Atelier
-          </Typography>
-          <div></div>
-        </NavbarContent>
-      </Navbar>
+  
       <MainContent>
         {error ? (
           <ErrorMessage>{error}</ErrorMessage>
@@ -200,9 +190,7 @@ const Cabinet = () => {
           </CabinetCard>
         )}
       </MainContent>
-      <Footer>
-        <Typography>© 2025 Shukurullo Atelier. Barcha huquqlar himoyalangan.</Typography>
-      </Footer>
+   
     </CabinetContainer>
   );
 };
