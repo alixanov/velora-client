@@ -118,7 +118,7 @@ const SwitchLink = styled(MuiLink)`
 const HomeButton = styled(Button)`
   position: absolute;
   top: -22rem;
-  left:-35rem;
+  left:-30rem;
   background-color: #d81b60;
   color: #fff;
   padding: 0.5rem 1rem;

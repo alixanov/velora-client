@@ -89,7 +89,6 @@ const Navbar = () => {
     { id: 'services', text: 'Xizmatlar' },
     { id: 'order', text: 'Buyurtma berish' },
     { id: 'gallery', text: 'Galereya' },
-    { id: 'contact', text: 'Aloqa' },
     {
       id: 'auth',
       text: isAuthenticated ? 'Shaxsiy kabinet' : 'Ro‘yxatdan o‘tish',
