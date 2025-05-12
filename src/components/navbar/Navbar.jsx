@@ -5,11 +5,10 @@ import { Box, Container, Typography, Link as MuiLink } from '@mui/material';
 import { Link, useLocation } from 'react-router-dom';
 
 const Header = styled.header`
-  background-color: #d81b60;
+  background-color: #d81b60; /* Розовый цвет */
   padding: 2rem 0;
   color: #fff;
-    font-family: 'Lora', serif;
-
+  font-family: 'Lora', serif;
 `;
 
 const ContactContainer = styled(Box)`
@@ -24,15 +23,22 @@ const ContactLink = styled(MuiLink)`
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  text-decoration: none;
-  color: #333;
+  text-decoration: none; /* Основное правило */
+  color: #000000; /* Чистый черный цвет */
   background-color: #fff;
   padding: 0.75rem 1.5rem;
   border-radius: 20px;
   transition: transform 0.3s, box-shadow 0.3s;
+  
+  /* Убираем стандартные синие стили для ссылок */
+  &:link, &:visited, &:active {
+    color: #000000;
+  }
+  
   &:hover {
     transform: scale(1.05);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    color: #d81b60; /* Розовый цвет при наведении */
   }
 `;
 
@@ -64,11 +70,11 @@ const MenuLink = styled(Typography)`
   transition: all 0.3s;
   cursor: pointer;
   &:hover {
-    background-color: #e9ecef;
-    color: #d81b60;
+    background-color: #f8bbd0; /* Светло-розовый при наведении */
+    color: #d81b60; /* Темно-розовый текст */
   }
   &.active {
-    background-color: #d81b60;
+    background-color: #d81b60; /* Темно-розовый */
     color: #fff;
   }
 `;
@@ -92,16 +98,13 @@ const Navbar = () => {
   ];
 
   useEffect(() => {
-    // Проверяем наличие токена в localStorage
     const token = localStorage.getItem('token');
     setIsAuthenticated(!!token);
 
-    // Определяем активный маршрут для кнопки auth/cabinet
     if (location.pathname === '/auth' || location.pathname === '/cabinet') {
       setActiveSection('auth');
     }
 
-    // Настройка IntersectionObserver для остальных секций
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {

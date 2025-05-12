@@ -11,7 +11,7 @@ const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 const CabinetContainer = styled.div`
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  min-height: 70vh;
   background: linear-gradient(180deg, #fff 0%, #f8bbd0 50%);
   font-family: 'Lora', serif;
 `;
