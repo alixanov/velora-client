@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
+import { Modal, Box, TextField, Button, Typography } from '@mui/material';
+import { ShoppingCart, Star } from '@mui/icons-material';
 
 // Импорт изображений
 import maxsus1 from '../../assets/maxsus_libos.jpg';
@@ -76,6 +78,8 @@ const FashionContainer = styled.div`
   background-color: #f3f4f6;
   font-family: 'Lora', serif;
   min-height: 100vh;
+    font-family: 'Lora', serif;
+
 `;
 
 const GalleryContainer = styled.div`
@@ -116,7 +120,10 @@ const GalleryImage = styled.img`
 `;
 
 const OrderButton = styled.button`
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
   width: 100%;
   padding: 0.75rem;
   font-size: 1rem;
@@ -131,6 +138,10 @@ const OrderButton = styled.button`
   &:hover {
     background-color: #c2185b;
   }
+
+  svg {
+    font-size: 1.2rem;
+  }
 `;
 
 const ErrorMessage = styled.div`
@@ -140,11 +151,118 @@ const ErrorMessage = styled.div`
   margin-top: 2rem;
 `;
 
+const ModalContainer = styled(Box)`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  max-width: 400px;
+  background-color: #fff;
+  padding: 2rem;
+  border-radius: 15px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+`;
+
+const ModalTitle = styled(Typography)`
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #d81b60;
+  text-align: center;
+`;
+
+const FormField = styled(TextField)`
+  width: 100%;
+`;
+
+const PayButton = styled(Button)`
+  background-color: ${(props) => (props.success ? '#4caf50' : '#d81b60')};
+  color: #fff;
+  padding: 0.75rem;
+  border-radius: 10px;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: ${(props) => (props.success ? '#45a049' : '#c2185b')};
+  }
+`;
+
 // Компонент галереи
 const Gallery = ({ images, serviceName }) => {
-  const handleOrder = (imageAlt) => {
-    alert(`Buyurtma berish: ${imageAlt}`);
-    // Здесь можно добавить логику для заказа
+  const [open, setOpen] = useState(false);
+  const [cardNumber, setCardNumber] = useState('');
+  const [expiryDate, setExpiryDate] = useState('');
+  const [cardError, setCardError] = useState('');
+  const [expiryError, setExpiryError] = useState('');
+  const [success, setSuccess] = useState(false);
+  const [selectedImage, setSelectedImage] = useState('');
+
+  const handleOpen = (imageAlt) => {
+    setSelectedImage(imageAlt);
+    setOpen(true);
+    setCardNumber('');
+    setExpiryDate('');
+    setCardError('');
+    setExpiryError('');
+    setSuccess(false);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleCardNumberChange = (e) => {
+    const value = e.target.value.replace(/\D/g, '').slice(0, 16);
+    setCardNumber(value);
+    if (value.length === 16) {
+      setCardError('');
+    } else {
+      setCardError('Karta raqami 16 raqamdan iborat bo‘lishi kerak');
+    }
+  };
+
+  const handleExpiryDateChange = (e) => {
+    let value = e.target.value.replace(/\D/g, '').slice(0, 4);
+    if (value.length >= 2) {
+      value = `${value.slice(0, 2)}/${value.slice(2)}`;
+    }
+    setExpiryDate(value);
+    if (/^\d{2}\/\d{2}$/.test(value)) {
+      const [month] = value.split('/').map(Number);
+      if (month >= 1 && month <= 12) {
+        setExpiryError('');
+      } else {
+        setExpiryError('Noto‘g‘ri oy (01-12)');
+      }
+    } else {
+      setExpiryError('MM/YY formatida kiriting');
+    }
+  };
+
+  const handlePayment = () => {
+    if (cardNumber.length !== 16) {
+      setCardError('Karta raqami 16 raqamdan iborat bo‘lishi kerak');
+      return;
+    }
+    if (!/^\d{2}\/\d{2}$/.test(expiryDate)) {
+      setExpiryError('MM/YY formatida kiriting');
+      return;
+    }
+    const [month] = expiryDate.split('/').map(Number);
+    if (month < 1 || month > 12) {
+      setExpiryError('Noto‘g‘ri oy (01-12)');
+      return;
+    }
+
+    setSuccess(true);
+    setTimeout(() => {
+      handleClose();
+      setSuccess(false);
+    }, 2000);
   };
 
   return (
@@ -154,12 +272,40 @@ const Gallery = ({ images, serviceName }) => {
         {images.map((image, index) => (
           <GalleryItem key={index}>
             <GalleryImage src={image.src} alt={image.alt} loading="lazy" />
-            <OrderButton onClick={() => handleOrder(image.alt)}>
-              Buyurtma berish
+            <OrderButton onClick={() => handleOpen(image.alt)}>
+              <ShoppingCart /> Buyurtma berish
             </OrderButton>
           </GalleryItem>
         ))}
       </GalleryGrid>
+      <Modal open={open} onClose={handleClose}>
+        <ModalContainer>
+          <ModalTitle>Tashrif buyurtma: {selectedImage}</ModalTitle>
+          <FormField
+            label="Karta raqami (16 raqam)"
+            variant="outlined"
+            value={cardNumber}
+            onChange={handleCardNumberChange}
+            inputProps={{ maxLength: 16, inputMode: 'numeric' }}
+            error={!!cardError}
+            helperText={cardError}
+            disabled={success}
+          />
+          <FormField
+            label="Amal qilish muddati (MM/YY)"
+            variant="outlined"
+            value={expiryDate}
+            onChange={handleExpiryDateChange}
+            inputProps={{ maxLength: 5 }}
+            error={!!expiryError}
+            helperText={expiryError}
+            disabled={success}
+          />
+          <PayButton onClick={handlePayment} success={success} disabled={success}>
+            {success ? 'Muvaffaqiyatli' : 'To‘lash'}
+          </PayButton>
+        </ModalContainer>
+      </Modal>
     </GalleryContainer>
   );
 };
@@ -252,12 +398,10 @@ const Fashion = () => {
     },
   };
 
-  const selectedService = services[serviceId];
-
   return (
     <FashionContainer>
-      {selectedService ? (
-        <Gallery images={selectedService.images} serviceName={selectedService.name} />
+      {services[serviceId] ? (
+        <Gallery images={services[serviceId].images} serviceName={services[serviceId].name} />
       ) : (
         <ErrorMessage>Xizmat topilmadi</ErrorMessage>
       )}

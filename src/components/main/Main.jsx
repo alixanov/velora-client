@@ -31,9 +31,7 @@ const Main = () => {
       <div id="order">
         <Order />
       </div>
-      <div id="contact">
-        <Footer />
-      </div>
+     
     </div>
   );
 };

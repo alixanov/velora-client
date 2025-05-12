@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Phone, Email, Telegram, Instagram } from '@mui/icons-material';
-import { Box, Container, Typography, Link } from '@mui/material';
+import { Box, Container, Typography, Link as MuiLink } from '@mui/material';
+import { Link, useLocation } from 'react-router-dom';
 
 const Header = styled.header`
   background-color: #d81b60;
   padding: 2rem 0;
   color: #fff;
+    font-family: 'Lora', serif;
+
 `;
 
 const ContactContainer = styled(Box)`
@@ -17,7 +20,7 @@ const ContactContainer = styled(Box)`
   justify-content: center;
 `;
 
-const ContactLink = styled(Link)`
+const ContactLink = styled(MuiLink)`
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -72,6 +75,8 @@ const MenuLink = styled(Typography)`
 
 const Navbar = () => {
   const [activeSection, setActiveSection] = useState('bosh-sahifa');
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const location = useLocation();
 
   const menuItems = [
     { id: 'bosh-sahifa', text: 'Bosh sahifa' },
@@ -79,17 +84,24 @@ const Navbar = () => {
     { id: 'order', text: 'Buyurtma berish' },
     { id: 'gallery', text: 'Galereya' },
     { id: 'contact', text: 'Aloqa' },
+    {
+      id: 'auth',
+      text: isAuthenticated ? 'Shaxsiy kabinet' : 'Ro‘yxatdan o‘tish',
+      path: isAuthenticated ? '/cabinet' : '/auth',
+    },
   ];
 
-  const handleScroll = (sectionId) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-      setActiveSection(sectionId);
-    }
-  };
-
   useEffect(() => {
+    // Проверяем наличие токена в localStorage
+    const token = localStorage.getItem('token');
+    setIsAuthenticated(!!token);
+
+    // Определяем активный маршрут для кнопки auth/cabinet
+    if (location.pathname === '/auth' || location.pathname === '/cabinet') {
+      setActiveSection('auth');
+    }
+
+    // Настройка IntersectionObserver для остальных секций
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -98,16 +110,26 @@ const Navbar = () => {
           }
         });
       },
-      { threshold: 0.5 } // Секция считается видимой, если 50% в области просмотра
+      { threshold: 0.5 }
     );
 
     menuItems.forEach((item) => {
-      const element = document.getElementById(item.id);
-      if (element) observer.observe(element);
+      if (item.id !== 'auth') {
+        const element = document.getElementById(item.id);
+        if (element) observer.observe(element);
+      }
     });
 
     return () => observer.disconnect();
-  }, []);
+  }, [location.pathname, isAuthenticated]);
+
+  const handleScroll = (sectionId) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+      setActiveSection(sectionId);
+    }
+  };
 
   return (
     <Box>
@@ -145,14 +167,26 @@ const Navbar = () => {
         <Container>
           <MenuContainer>
             {menuItems.map((item) => (
-              <MenuLink
-                key={item.id}
-                className={activeSection === item.id ? 'active' : ''}
-                onClick={() => handleScroll(item.id)}
-                aria-label={item.text}
-              >
-                {item.text}
-              </MenuLink>
+              item.path ? (
+                <MenuLink
+                  key={item.id}
+                  component={Link}
+                  to={item.path}
+                  className={activeSection === item.id ? 'active' : ''}
+                  aria-label={item.text}
+                >
+                  {item.text}
+                </MenuLink>
+              ) : (
+                <MenuLink
+                  key={item.id}
+                  className={activeSection === item.id ? 'active' : ''}
+                  onClick={() => handleScroll(item.id)}
+                  aria-label={item.text}
+                >
+                  {item.text}
+                </MenuLink>
+              )
             ))}
           </MenuContainer>
         </Container>
