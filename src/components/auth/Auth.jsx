@@ -57,18 +57,30 @@ const AuthContainer = styled(Box)`
   overflow: hidden;
 `;
 
+
 const FormContainer = styled(Box)`
   background-color: #fff;
   padding: 2rem;
-  border-radius: 15px;
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   max-width: 400px;
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1rem;
   z-index: 1;
+
+  @media (max-width: 600px) {
+    padding: 1.5rem;
+    max-width: 100%;
+  }
+
+  @media (max-width: 400px) {
+    width: 100%; /* Более адаптивное решение */
+    margin-left: -60px; /* Убраны кавычки */
+  }
 `;
+
 
 const FormTitle = styled(Typography)`
   font-size: 1.8rem;
