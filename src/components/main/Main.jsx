@@ -9,11 +9,14 @@ import FAQ from '../faq/Faq';
 import Order from '../order/Order';
 
 const MainContainer = styled.div`
-max-width: 1920px;
+  max-width: 1920px;
+  width: 100%;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   font-family: 'Lora', serif;
   box-sizing: border-box;
+  overflow-x: hidden; /* Prevent horizontal scroll */
 
   @media (max-width: 600px) {
     padding: 1rem;
@@ -27,17 +30,24 @@ max-width: 1920px;
 `;
 
 const SectionContainer = styled.div`
+  width: 100%;
   min-height: 100vh;
   box-sizing: border-box;
+  padding: 0 1rem;
+
+  @media (max-width: 768px) {
+    min-height: 80vh;
+    padding: 0 0.5rem;
+  }
 
   @media (max-width: 600px) {
-    padding: 1rem;
-    min-height: 80vh;
+    min-height: 70vh;
+    padding: 0 0.5rem;
   }
 
   @media (max-width: 400px) {
-    padding: 0.5rem;
-    min-height: 70vh;
+    min-height: 60vh;
+    padding: 0 0.25rem;
   }
 `;
 
