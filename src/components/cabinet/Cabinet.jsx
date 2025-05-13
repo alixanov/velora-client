@@ -2,11 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Typography, Button, Box, AppBar, Toolbar, IconButton } from '@mui/material';
 import { ExitToApp, Email, Menu as MenuIcon } from '@mui/icons-material';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-
-// Define the backend URL using an environment variable
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
 const CabinetContainer = styled.div`
   display: flex;
@@ -138,43 +134,29 @@ const Cabinet = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const storedName = localStorage.getItem('name');
+    const storedEmail = localStorage.getItem('email'); // Directly use stored email
     const token = localStorage.getItem('token');
-    if (!token) {
+
+    if (!token || !storedName || !storedEmail) {
+      setError('Sessiya tugagan. Iltimos, qayta kiring.');
       navigate('/auth');
       return;
     }
 
-    axios
-      .get(`${API_URL}/api/protected`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then((response) => {
-        console.log('API Response:', response.data); // Debug log
-        if (response.data.success && response.data.user) {
-          setName(response.data.user.name);
-          setEmail(response.data.user.email);
-        } else {
-          throw new Error('Invalid response structure');
-        }
-      })
-      .catch((err) => {
-        console.error('Fetch Error:', err);
-        setError('Sessiya tugagan. Iltimos, qayta kiring.');
-        localStorage.removeItem('token');
-        localStorage.removeItem('name');
-        navigate('/auth');
-      });
+    setName(storedName);
+    setEmail(storedEmail);
   }, [navigate]);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('name');
+    localStorage.removeItem('email');
     navigate('/auth');
   };
 
   return (
     <CabinetContainer>
-  
       <MainContent>
         {error ? (
           <ErrorMessage>{error}</ErrorMessage>
@@ -190,7 +172,6 @@ const Cabinet = () => {
           </CabinetCard>
         )}
       </MainContent>
-   
     </CabinetContainer>
   );
 };

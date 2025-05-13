@@ -2,12 +2,8 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Box, TextField, Button, Typography, Link as MuiLink } from '@mui/material';
 import { Home } from '@mui/icons-material';
-import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-
-// Define the backend URL using an environment variable
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
 const theme = createTheme({
   palette: {
@@ -117,8 +113,8 @@ const SwitchLink = styled(MuiLink)`
 
 const HomeButton = styled(Button)`
   position: absolute;
-  top: -22rem;
-  left:-30rem;
+  top: -21rem;
+  left: -34rem;
   background-color: #d81b60;
   color: #fff;
   padding: 0.5rem 1rem;
@@ -166,7 +162,7 @@ const Auth = () => {
     return true;
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     setError('');
 
@@ -174,22 +170,53 @@ const Auth = () => {
 
     try {
       setLoading(true);
-      const endpoint = isRegister ? '/api/register' : '/api/login';
-      const payload = isRegister ? { name, email, password } : { email, password };
-      const response = await axios.post(`${API_URL}${endpoint}`, payload);
 
-      console.log('API Response:', response.data); // Debug log
-      if (response.data.success && response.data.token && response.data.user) {
-        localStorage.setItem('token', response.data.token);
-        localStorage.setItem('name', response.data.user.name);
-        navigate('/cabinet');
+      if (isRegister) {
+        // Check if user already exists
+        const existingUser = localStorage.getItem(`user_${email}`);
+        if (existingUser) {
+          setError('Bu email bilan foydalanuvchi mavjud');
+          setLoading(false);
+          return;
+        }
+
+        // Save new user data
+        const userData = { name, email, password };
+        localStorage.setItem(`user_${email}`, JSON.stringify(userData));
+        localStorage.setItem('token', `fakeToken_${email}_${Date.now()}`);
+        localStorage.setItem('name', name);
+        localStorage.setItem('email', email);
+
+        // Switch to login mode and prefill email
+        setIsRegister(false);
+        setName('');
+        setPassword('');
+        setError('Muvaffaqiyatli ro‘yxatdan o‘tdingiz! Endi kiring.');
       } else {
-        throw new Error('Invalid response structure');
+        // Simulate login
+        const storedUser = localStorage.getItem(`user_${email}`);
+        if (!storedUser) {
+          setError('Foydalanuvchi topilmadi');
+          setLoading(false);
+          return;
+        }
+        const userData = JSON.parse(storedUser);
+        if (userData.password !== password) {
+          setError('Noto‘g‘ri parol');
+          setLoading(false);
+          return;
+        }
+        localStorage.setItem('token', `fakeToken_${email}_${Date.now()}`);
+        localStorage.setItem('name', userData.name);
+        localStorage.setItem('email', userData.email);
+
+        // Navigate to cabinet after successful login
+        setLoading(false);
+        navigate('/cabinet');
       }
     } catch (err) {
-      console.error('Fetch Error:', err);
-      setError(err.response?.data?.error || (isRegister ? 'Ro‘yxatdan o‘tishda xatolik' : 'Kirishda xatolik'));
-    } finally {
+      console.error('Local Storage Error:', err);
+      setError('Xatolik yuz berdi');
       setLoading(false);
     }
   };

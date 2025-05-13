@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Phone, Email, Telegram, Instagram } from '@mui/icons-material';
 import { Box, Container, Typography, Link as MuiLink } from '@mui/material';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 const Header = styled.header`
-  background-color: #d81b60; /* Розовый цвет */
+  background-color: #d81b60;
   padding: 2rem 0;
   color: #fff;
   font-family: 'Lora', serif;
@@ -23,22 +23,21 @@ const ContactLink = styled(MuiLink)`
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  text-decoration: none; /* Основное правило */
-  color: #000000; /* Чистый черный цвет */
+  text-decoration: none;
+  color: #000000;
   background-color: #fff;
   padding: 0.75rem 1.5rem;
   border-radius: 20px;
   transition: transform 0.3s, box-shadow 0.3s;
-  
-  /* Убираем стандартные синие стили для ссылок */
+
   &:link, &:visited, &:active {
     color: #000000;
   }
-  
+
   &:hover {
     transform: scale(1.05);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    color: #d81b60; /* Розовый цвет при наведении */
+    color: #d81b60;
   }
 `;
 
@@ -70,11 +69,11 @@ const MenuLink = styled(Typography)`
   transition: all 0.3s;
   cursor: pointer;
   &:hover {
-    background-color: #f8bbd0; /* Светло-розовый при наведении */
-    color: #d81b60; /* Темно-розовый текст */
+    background-color: #f8bbd0;
+    color: #d81b60;
   }
   &.active {
-    background-color: #d81b60; /* Темно-розовый */
+    background-color: #d81b60;
     color: #fff;
   }
 `;
@@ -83,12 +82,13 @@ const Navbar = () => {
   const [activeSection, setActiveSection] = useState('bosh-sahifa');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
 
   const menuItems = [
-    { id: 'bosh-sahifa', text: 'Bosh sahifa' },
-    { id: 'services', text: 'Xizmatlar' },
-    { id: 'order', text: 'Buyurtma berish' },
-    { id: 'gallery', text: 'Galereya' },
+    { id: 'bosh-sahifa', text: 'Bosh sahifa', path: '/' },
+    { id: 'services', text: 'Xizmatlar', path: '/#services' },
+    { id: 'order', text: 'Buyurtma berish', path: '/#order' },
+    { id: 'gallery', text: 'Galereya', path: '/#gallery' },
     {
       id: 'auth',
       text: isAuthenticated ? 'Shaxsiy kabinet' : 'Ro‘yxatdan o‘tish',
@@ -100,36 +100,61 @@ const Navbar = () => {
     const token = localStorage.getItem('token');
     setIsAuthenticated(!!token);
 
-    if (location.pathname === '/auth' || location.pathname === '/cabinet') {
+    // Устанавливаем активную секцию в зависимости от пути
+    if (location.pathname === '/auth') {
       setActiveSection('auth');
-    }
+    } else if (location.pathname === '/cabinet') {
+      setActiveSection('auth');
+    } else if (location.pathname === '/') {
+      // Для главной страницы используем IntersectionObserver
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              setActiveSection(entry.target.id);
+            }
+          });
+        },
+        { threshold: 0.5 }
+      );
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setActiveSection(entry.target.id);
-          }
-        });
-      },
-      { threshold: 0.5 }
-    );
+      const sectionsToObserve = menuItems
+        .filter((item) => item.id !== 'auth')
+        .map((item) => item.id.replace('#', ''));
 
-    menuItems.forEach((item) => {
-      if (item.id !== 'auth') {
-        const element = document.getElementById(item.id);
+      sectionsToObserve.forEach((id) => {
+        const element = document.getElementById(id);
         if (element) observer.observe(element);
-      }
-    });
+      });
 
-    return () => observer.disconnect();
+      return () => {
+        observer.disconnect();
+      };
+    }
   }, [location.pathname, isAuthenticated]);
 
-  const handleScroll = (sectionId) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-      setActiveSection(sectionId);
+  const handleNavClick = (item) => {
+    if (item.path.startsWith('/#')) {
+      // Обработка якорных ссылок на главной странице
+      if (location.pathname !== '/') {
+        navigate('/');
+        setTimeout(() => {
+          const sectionId = item.path.split('#')[1];
+          const element = document.getElementById(sectionId);
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth' });
+          }
+        }, 100);
+      } else {
+        const sectionId = item.path.split('#')[1];
+        const element = document.getElementById(sectionId);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }
+    } else {
+      // Обычная навигация
+      navigate(item.path);
     }
   };
 
@@ -169,26 +194,14 @@ const Navbar = () => {
         <Container>
           <MenuContainer>
             {menuItems.map((item) => (
-              item.path ? (
-                <MenuLink
-                  key={item.id}
-                  component={Link}
-                  to={item.path}
-                  className={activeSection === item.id ? 'active' : ''}
-                  aria-label={item.text}
-                >
-                  {item.text}
-                </MenuLink>
-              ) : (
-                <MenuLink
-                  key={item.id}
-                  className={activeSection === item.id ? 'active' : ''}
-                  onClick={() => handleScroll(item.id)}
-                  aria-label={item.text}
-                >
-                  {item.text}
-                </MenuLink>
-              )
+              <MenuLink
+                key={item.id}
+                className={activeSection === item.id ? 'active' : ''}
+                onClick={() => handleNavClick(item)}
+                aria-label={item.text}
+              >
+                {item.text}
+              </MenuLink>
             ))}
           </MenuContainer>
         </Container>

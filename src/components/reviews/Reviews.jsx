@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Box, Typography, TextField, Button } from '@mui/material';
 import { Star } from '@mui/icons-material';
-import axios from 'axios';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination, Autoplay } from 'swiper/modules';
 import 'swiper/css';
@@ -164,6 +163,49 @@ const Testimonial = styled.div`
   }
 `;
 
+const fakeReviews = [
+  {
+    author: 'Zilola',
+    text: 'Ajoyib xizmat! Kiyimlarimni tez va sifatli tikishdi. Albatta yana murojaat qilaman!',
+  },
+  {
+    author: 'Rustam',
+    text: 'Atelie xodimlari juda mehribon va professional. Dizaynlar o‘ziga xos va chiroyli.',
+  },
+  {
+    author: 'Madina',
+    text: 'Maxsus buyurtma qildim, natija kutilganidan ham yaxshi bo‘ldi. Rahmat!',
+  },
+  {
+    author: 'Oybek',
+    text: 'Tez yetkazib berish va ajoyib sifat. Hammaga tavsiya qilaman!',
+  },
+  {
+    author: 'Nodira',
+    text: 'Kiyimlarning detallari va tikuv sifati yuqori darajada. Juda mamnunman!',
+  },
+  {
+    author: 'Shaxzod',
+    text: 'Individual yondashuv va mijozlarga e’tibor meni hayratda qoldirdi.',
+  },
+  {
+    author: 'Gulnoza',
+    text: 'Ateliedagi xizmatlar narxi va sifati muvozanatda. Yana qaytaman!',
+  },
+  {
+    author: 'Jasur',
+    text: 'Buyurtmani o‘z vaqtida oldim, hamma narsa mukammal edi.',
+  },
+  {
+    author: 'Feruza',
+    text: 'Dizaynlar zamonaviy va o‘zbekona ruhda. Juda yoqdi!',
+  },
+  {
+    author: 'Aziz',
+    text: 'Professional jamoa, har bir detalga e’tibor berishadi. 5 yulduz!',
+  },
+];
+
 const Reviews = () => {
   const [reviews, setReviews] = useState([]);
   const [author, setAuthor] = useState('');
@@ -171,59 +213,38 @@ const Reviews = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Загрузка отзывов
-  const fetchReviews = async () => {
-    try {
-      setLoading(true);
-      const response = await axios.get('http://localhost:5000/api/reviews');
-      console.log('API Response:', response.data); // Debug log
-      if (response.data.success && Array.isArray(response.data.reviews)) {
-        setReviews(response.data.reviews);
-      } else {
-        setReviews([]);
-      }
-      setError('');
-    } catch (err) {
-      console.error('Fetch Error:', err);
-      setError('Отзывы не удалось загрузить. Попробуйте позже.');
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Загрузка отзывов из localStorage и объединение с фейковыми
+  useEffect(() => {
+    const storedReviews = JSON.parse(localStorage.getItem('reviews')) || [];
+    setReviews([...storedReviews, ...fakeReviews]);
+  }, []);
 
   // Отправка отзыва
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     if (!author.trim() || !text.trim()) {
-      setError('Пожалуйста, заполните все поля.');
+      setError('Iltimos, barcha maydonlarni to‘ldiring.');
       return;
     }
 
-    try {
-      setLoading(true);
-      const response = await axios.post('http://localhost:5000/api/reviews', {
-        author: author.trim(),
-        text: text.trim(),
-      });
-      console.log('Submit Response:', response.data); // Debug log
-      if (response.data.success && response.data.review) {
-        setReviews([response.data.review, ...reviews]);
-        setAuthor('');
-        setText('');
-        setError('');
-      }
-    } catch (err) {
-      console.error('Submit Error:', err);
-      setError('Не удалось отправить отзыв. Попробуйте позже.');
-    } finally {
-      setLoading(false);
-    }
-  };
+    setLoading(true);
+    const newReview = {
+      author: author.trim(),
+      text: text.trim(),
+    };
 
-  // Загружаем отзывы при монтировании компонента
-  useEffect(() => {
-    fetchReviews();
-  }, []);
+    // Сохранение в localStorage
+    const storedReviews = JSON.parse(localStorage.getItem('reviews')) || [];
+    const updatedReviews = [newReview, ...storedReviews];
+    localStorage.setItem('reviews', JSON.stringify(updatedReviews));
+
+    // Обновление состояния
+    setReviews([newReview, ...reviews]);
+    setAuthor('');
+    setText('');
+    setError('');
+    setLoading(false);
+  };
 
   return (
     <ReviewsSection>
@@ -231,9 +252,7 @@ const Reviews = () => {
         Mijozlarimiz fikri
       </Title>
 
-      {loading && !reviews.length ? (
-        <Typography>Loading...</Typography>
-      ) : reviews.length > 0 ? (
+      {reviews.length > 0 ? (
         <SwiperContainer>
           <Swiper
             modules={[Navigation, Pagination, Autoplay]}

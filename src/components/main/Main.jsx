@@ -1,38 +1,73 @@
-import React from 'react'
-import About from '../about/About'
-import Services from '../services/Services'
-import Reviews from '../reviews/Reviews'
-import Gallery from '../cloth/Cloth'
-import Work from '../work/Work'
-import FAQ from '../faq/Faq'
-import Order from '../order/Order'
-import Footer from '../footer/Footer'
+import React from 'react';
+import styled from 'styled-components';
+import About from '../about/About';
+import Services from '../services/Services';
+import Reviews from '../reviews/Reviews';
+import Gallery from '../cloth/Cloth';
+import Work from '../work/Work';
+import FAQ from '../faq/Faq';
+import Order from '../order/Order';
+
+const MainContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  padding: 2rem;
+  font-family: 'Lora', serif;
+  box-sizing: border-box;
+
+  @media (max-width: 600px) {
+    padding: 1rem;
+    gap: 2rem;
+  }
+
+  @media (max-width: 400px) {
+    padding: 0.5rem;
+    gap: 1.5rem;
+  }
+`;
+
+const SectionContainer = styled.div`
+  min-height: 100vh;
+  padding: 2rem;
+  box-sizing: border-box;
+
+  @media (max-width: 600px) {
+    padding: 1rem;
+    min-height: 80vh;
+  }
+
+  @media (max-width: 400px) {
+    padding: 0.5rem;
+    min-height: 70vh;
+  }
+`;
+
 const Main = () => {
   return (
-    <div>
-      <div id="bosh-sahifa">
+    <MainContainer>
+      <SectionContainer id="bosh-sahifa">
         <About />
-      </div>
-      <div id="services">
+      </SectionContainer>
+      <SectionContainer id="services">
         <Services />
-      </div>
-      <div id="reviews">
+      </SectionContainer>
+      <SectionContainer id="reviews">
         <Reviews />
-      </div>
-      <div id="gallery">
+      </SectionContainer>
+      <SectionContainer id="gallery">
         <Gallery />
-      </div>
-      <div id="work">
+      </SectionContainer>
+      <SectionContainer id="work">
         <Work />
-      </div>
-      <div id="faq">
+      </SectionContainer>
+      <SectionContainer id="faq">
         <FAQ />
-      </div>
-      <div id="order">
+      </SectionContainer>
+      <SectionContainer id="order">
         <Order />
-      </div>
-     
-    </div>
+      </SectionContainer>
+    </MainContainer>
   );
 };
 
