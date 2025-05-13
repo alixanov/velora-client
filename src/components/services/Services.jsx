@@ -6,11 +6,23 @@ import { Celebration, LocalLaundryService, DesignServices } from '@mui/icons-mat
 
 const ServicesSection = styled.section`
   padding: 5rem 2rem;
+  background: linear-gradient(180deg, #fff 0%, #fce4ec 100%); /* Softer gradient */
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
   font-family: 'Lora', serif;
+  min-height: 100vh;
+  box-sizing: border-box;
+
+  @media (max-width: 600px) {
+    padding: 2rem 1rem;
+    min-height: 80vh;
+  }
+
+  @media (max-width: 400px) {
+    padding: 1rem 0.5rem;
+  }
 `;
 
 const Title = styled(Typography)`
@@ -20,49 +32,76 @@ const Title = styled(Typography)`
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  margin-bottom: 2.5rem;
-  letter-spacing: 1.5px;
-  text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
-  animation: fadeIn 1s ease-in-out;
+  margin-bottom: 2rem;
+  letter-spacing: 1px;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 0.8s ease-in-out;
 
   @keyframes fadeIn {
     from {
       opacity: 0;
-      transform: translateY(20px);
+      transform: translateY(15px);
     }
     to {
       opacity: 1;
       transform: translateY(0);
     }
   }
+
+  @media (max-width: 600px) {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+  }
+
+  @media (max-width: 400px) {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
 `;
 
 const ServicesList = styled.ul`
   list-style: none;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0;
+  padding: 0 1rem;
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    padding: 0 0.5rem;
+  }
+
+  @media (max-width: 400px) {
+    gap: 0.75rem;
+  }
 `;
 
 const ServiceItem = styled.li`
   background-color: #fff;
-  padding: 2rem;
-  border-radius: 15px;
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  text-decoration: none; /* Убираем подчеркивание для ссылки */
-  cursor: pointer; /* Указываем, что элемент кликабелен */
+  cursor: pointer;
 
   &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  }
+
+  @media (max-width: 600px) {
+    padding: 1rem;
+  }
+
+  @media (max-width: 400px) {
+    padding: 0.75rem;
   }
 `;
 
@@ -84,12 +123,29 @@ const ServiceText = styled.span`
   ${ServiceItem}:hover & {
     color: #f06292;
   }
+
+  @media (max-width: 600px) {
+    font-size: 1rem;
+  }
+
+  @media (max-width: 400px) {
+    font-size: 0.9rem;
+  }
 `;
 
 const ServiceIcon = styled.div`
   color: #d81b60;
   font-size: 2.5rem;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
+
+  @media (max-width: 600px) {
+    font-size: 2rem;
+  }
+
+  @media (max-width: 400px) {
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+  }
 `;
 
 const Services = () => {

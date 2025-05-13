@@ -9,10 +9,9 @@ import FAQ from '../faq/Faq';
 import Order from '../order/Order';
 
 const MainContainer = styled.div`
+max-width: 1920px;
   display: flex;
   flex-direction: column;
-  gap: 3rem;
-  padding: 2rem;
   font-family: 'Lora', serif;
   box-sizing: border-box;
 
@@ -29,7 +28,6 @@ const MainContainer = styled.div`
 
 const SectionContainer = styled.div`
   min-height: 100vh;
-  padding: 2rem;
   box-sizing: border-box;
 
   @media (max-width: 600px) {

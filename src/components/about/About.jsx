@@ -1,57 +1,45 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Box, Typography } from '@mui/material';
-import { Timeline, People, Checkroom } from '@mui/icons-material'; // Icons for stats
+import { Timeline, People, Checkroom } from '@mui/icons-material';
 import girl1 from "../../assets/logatib.png";
 import girl2 from "../../assets/logatib1.png";
 import girl3 from "../../assets/logatib2.png";
 
 const AboutSection = styled.section`
   padding: 5rem 2rem;
-  background: linear-gradient(180deg, #fff 0%, #f8bbd0 100%); /* Subtle gradient */
+  background: linear-gradient(180deg, #fff 0%, #fce4ec 100%); /* Softer gradient */
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
   font-family: 'Lora', serif;
-  position: relative;
+  min-height: 100vh;
+  box-sizing: border-box;
+
+  @media (max-width: 600px) {
+    padding: 2rem 1rem;
+    min-height: 80vh;
+  }
+
+  @media (max-width: 400px) {
+    padding: 1rem 0.5rem;
+  }
 `;
 
 const Title = styled(Typography)`
-  font-size: 2.8rem; /* Reduced for better proportion */
+  font-size: 2.8rem;
   font-weight: 700;
-  background: linear-gradient(45deg, #d81b60, #f06292); /* Gradient text */
+  background: linear-gradient(45deg, #d81b60, #f06292);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
   margin-bottom: 2rem;
-  letter-spacing: 1.5px;
-  text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
-  animation: fadeInSlide 1.2s ease-in-out;
+  letter-spacing: 1px;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.1);
+  animation: fadeInSlide 1s ease-in-out;
 
   @keyframes fadeInSlide {
-    from {
-      opacity: 0;
-      transform: translateY(30px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-`;
-
-const Description = styled(Typography)`
-  font-size: 1.2rem; /* Reduced for readability */
-  color: #444;
-  line-height: 1.9;
-  max-width: 900px;
-  margin: 0 auto 3rem;
-  font-weight: 400;
-  font-style: italic;
-  animation: fadeInDelay 1.5s ease-in-out 0.3s backwards; /* Delayed animation */
-
-  @keyframes fadeInDelay {
     from {
       opacity: 0;
       transform: translateY(20px);
@@ -61,47 +49,108 @@ const Description = styled(Typography)`
       transform: translateY(0);
     }
   }
+
+  @media (max-width: 600px) {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+  }
+
+  @media (max-width: 400px) {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+`;
+
+const Description = styled(Typography)`
+  font-size: 1.4rem; /* Increased from 1.2rem */
+  color: #333;
+  line-height: 1.9;
+  max-width: 900px;
+  margin: 0 auto 2.5rem;
+  font-weight: 400;
+  font-style: italic;
+  animation: fadeInDelay 1.2s ease-in-out 0.2s backwards;
+
+  @keyframes fadeInDelay {
+    from {
+      opacity: 0;
+      transform: translateY(15px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @media (max-width: 600px) {
+    font-size: 1.2rem;
+    margin: 0 1rem 2rem;
+  }
+
+  @media (max-width: 400px) {
+    font-size: 1rem;
+    margin: 0 0.5rem 1.5rem;
+  }
 `;
 
 const ImageGallery = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 2rem;
-  margin-bottom: 3rem;
+  gap: 1.5rem;
   padding: 0 1rem;
   max-width: 1200px;
-  margin: 0 auto 3rem;
+  margin: 0 auto 2.5rem;
 
   img {
     width: 100%;
-    height: 600px;
+    height: auto; /* Changed from fixed 600px */
+    max-height: 500px;
     object-fit: cover;
-    border-radius: 15px;
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
-    transition: transform 0.4s ease, box-shadow 0.4s ease;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 
     &:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
     }
+  }
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    padding: 0 0.5rem;
+    margin-bottom: 2rem;
+  }
+
+  @media (max-width: 400px) {
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
   }
 `;
 
 const StatsContainer = styled.div`
   display: flex;
-  justify-content: center; /* Added for proper centering */
-  gap: 2.5rem;
+  justify-content: center;
+  gap: 2rem;
   flex-wrap: wrap;
   max-width: 1200px;
   margin: 0 auto;
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
 `;
 
 const StatItem = styled.div`
   background-color: #fff;
-  padding: 2rem;
-  border-radius: 20px;
-  width: 220px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 220px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease;
   display: flex;
   flex-direction: column;
@@ -109,24 +158,57 @@ const StatItem = styled.div`
   gap: 0.5rem;
 
   &:hover {
-    transform: translateY(-5px);
+    transform: translateY(-3px);
   }
 
   h3 {
-    font-size: 2.2rem;
+    font-size: 2rem;
     color: #d81b60;
     font-weight: 700;
   }
 
   p {
-    font-size: 1rem;
-    color: #666;
+    font-size: 0.9rem;
+    color: #555;
     font-weight: 400;
   }
 
   svg {
     color: #d81b60;
-    font-size: 2rem;
+    font-size: 1.8rem;
+  }
+
+  @media (max-width: 600px) {
+    max-width: 300px;
+    padding: 1rem;
+
+    h3 {
+      font-size: 1.8rem;
+    }
+
+    p {
+      font-size: 0.85rem;
+    }
+
+    svg {
+      font-size: 1.6rem;
+    }
+  }
+
+  @media (max-width: 400px) {
+    padding: 0.75rem;
+
+    h3 {
+      font-size: 1.5rem;
+    }
+
+    p {
+      font-size: 0.8rem;
+    }
+
+    svg {
+      font-size: 1.4rem;
+    }
   }
 `;
 
@@ -143,9 +225,7 @@ const About = () => {
         Biz haqimizda
       </Title>
       <Description variant="body1">
-        Ateliyemiz 2018 yilda ochilgan bo‘lib, yuqori sifatli liboslar va professional tikuv xizmatlarini
-        taqdim etishda yetakchilik qilamiz. Sizning individual uslubingizni kashf eting va biz bilan
-        o‘ziga xos dizaynni jonlantiring!
+        O‘zbegim Moda Ateliyesi 2018 yilda tashkil etilgan bo‘lib, yuqori sifatli liboslar va professional tikuv xizmatlarini taqdim etishda yetakchi hisoblanadi. Bizning maqsadimiz — har bir mijozning individual uslubini kashf etish va o‘ziga xos dizaynlarni hayotga tatbiq etish. Har bir tikilgan kiyimda nafislik va milliy an’analarni mujassamlashtirib, sizning orzularingizni ro‘yobga chiqaramiz!
       </Description>
       <ImageGallery>
         <img src={girl1} alt="Ateliye tashqi ko'rinishi" loading="lazy" />

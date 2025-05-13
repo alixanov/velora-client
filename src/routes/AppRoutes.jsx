@@ -17,7 +17,6 @@ const MainContainer = styled.main`
 
 const ContentSection = styled.section`
   flex: 1;
-  padding: 2rem;
   box-sizing: border-box;
 
   @media (max-width: 600px) {
