@@ -14,27 +14,18 @@ const MainContainer = styled.main`
   min-height: 100vh;
   font-family: 'Lora', serif;
   width: 100%;
-  overflow-x: hidden; /* Prevent horizontal scroll */
+  overflow-x: hidden;
   box-sizing: border-box;
 `;
 
 const ContentSection = styled.section`
   flex: 1;
+  display: flex;
+  flex-direction: column;
   box-sizing: border-box;
   width: 100%;
+  margin: 0;
   padding: 0;
-
-  @media (max-width: 768px) {
-    padding: 0 0.5rem;
-  }
-
-  @media (max-width: 600px) {
-    padding: 0 0.5rem;
-  }
-
-  @media (max-width: 400px) {
-    padding: 0 0.25rem;
-  }
 `;
 
 const AppRoutes = () => {

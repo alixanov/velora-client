@@ -1,12 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Box, Typography, Link } from '@mui/material';
+import { Box, Typography, Link as MuiLink } from '@mui/material';
 import { Phone, Telegram, LocationOn, Instagram, YouTube } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
 import logo from '../../assets/logoooooo.png';
 
 const FooterSection = styled.footer`
   padding: 4rem 2rem;
-  background-color: #d81b60;
+  background: linear-gradient(180deg, #d81b60 0%, #f06292 100%);
   font-family: 'Lora', serif;
   color: #fff;
   min-height: 300px;
@@ -46,12 +47,25 @@ const FooterColumn = styled.div`
   flex-direction: column;
   align-items: center;
   text-align: center;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  padding: 1.5rem;
+  border-radius: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(217, 26, 96, 0.3);
+  }
 
   &.footer-logo {
     img {
       max-width: 150px;
       height: auto;
       margin-bottom: 0.75rem;
+      filter: drop-shadow(0 0 8px rgba(217, 26, 96, 0.5));
+      animation: fadeInLogo 1s ease-in-out;
     }
     p {
       font-size: 0.9rem;
@@ -76,23 +90,48 @@ const FooterColumn = styled.div`
       }
     }
   }
+
+  @keyframes fadeInLogo {
+    from {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
 `;
 
 const FooterTitle = styled(Typography)`
-  font-size: 1.5rem;
+  font-size: 2.6rem !important;
   font-weight: 700;
-  color: #fff;
-  margin-bottom: 1rem;
+  background: linear-gradient(45deg, #fff, #ff4081);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin-bottom: 1rem !important;
   letter-spacing: 0.5px;
-  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 0.8s ease-out;
 
   @media (max-width: 600px) {
-    font-size: 1.2rem;
+    font-size: 1.3rem;
     margin-bottom: 0.75rem;
   }
 
   @media (max-width: 400px) {
-    font-size: 1rem;
+    font-size: 1.1rem;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 `;
 
@@ -108,36 +147,20 @@ const FooterListItem = styled.li`
   align-items: center;
   gap: 0.5rem;
 
-  a {
-    text-decoration: none;
-    color: #fff;
-    font-size: 1rem;
-    transition: color 0.3s ease;
-
-    &:hover {
-      color: #f06292;
-    }
-  }
-
   svg {
     color: #fff;
     font-size: 1.1rem;
+    transition: color 0.3s ease;
   }
 
   @media (max-width: 600px) {
     margin-bottom: 0.5rem;
-    a {
-      font-size: 0.9rem;
-    }
     svg {
       font-size: 1rem;
     }
   }
 
   @media (max-width: 400px) {
-    a {
-      font-size: 0.85rem;
-    }
     svg {
       font-size: 0.9rem;
     }
@@ -160,14 +183,14 @@ const SocialIcons = styled.div`
       height: 28px;
       transition: transform 0.3s ease, color 0.3s ease;
       border-radius: 50%;
-      padding: 4px;
-      background-color: rgba(255, 255, 255, 0.1);
+      padding: 6px;
+      background: linear-gradient(45deg, #d81b60, #ff4081);
     }
 
     &:hover svg {
-      transform: scale(1.1);
-      color: #f06292;
-      background-color: rgba(255, 255, 255, 0.2);
+      transform: scale(1.2) rotate(10deg);
+      color: #fff;
+      background: linear-gradient(45deg, #f06292, #ff4081);
     }
   }
 
@@ -176,7 +199,7 @@ const SocialIcons = styled.div`
     svg {
       width: 24px;
       height: 24px;
-      padding: 3px;
+      padding: 5px;
     }
   }
 
@@ -185,18 +208,19 @@ const SocialIcons = styled.div`
     svg {
       width: 20px;
       height: 20px;
-      padding: 2px;
+      padding: 4px;
     }
   }
 `;
 
 const Footer = () => {
+  const navigate = useNavigate();
+
   const usefulLinks = [
-    { text: 'Bosh sahifa', href: '#home' },
-    { text: 'Menyu', href: '#menu' },
-    { text: 'Biz haqimizda', href: '#about' },
-    { text: 'Galereya', href: '#gallery' },
-    { text: 'Aloqa', href: '#contact' },
+    { id: 'bosh-sahifa', text: 'Bosh sahifa', path: '/' },
+    { id: 'services', text: 'Xizmatlar', path: '/#services' },
+    { id: 'order', text: 'Buyurtma berish', path: '/#order' },
+    { id: 'gallery', text: 'Galereya', path: '/#gallery' },
   ];
 
   const contactInfo = [
@@ -216,15 +240,70 @@ const Footer = () => {
     { href: 'https://youtube.com/atelie', icon: <YouTube />, alt: 'YouTube' },
   ];
 
+  const handleLinkClick = (path) => {
+    if (path === '/') {
+      navigate('/');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      const sectionId = path.split('#')[1];
+      if (sectionId) {
+        const element = document.getElementById(sectionId);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        } else {
+          navigate('/');
+          setTimeout(() => {
+            const retryElement = document.getElementById(sectionId);
+            if (retryElement) {
+              retryElement.scrollIntoView({ behavior: 'smooth' });
+            }
+          }, 100);
+        }
+      }
+    }
+  };
+
   return (
     <FooterSection>
       <FooterContainer>
         <FooterColumn>
           <FooterTitle variant="h3">Foydali havolalar</FooterTitle>
           <FooterList>
-            {usefulLinks.map((link, index) => (
-              <FooterListItem key={index}>
-                <Link href={link.href}>{link.text}</Link>
+            {usefulLinks.map((link) => (
+              <FooterListItem key={link.id}>
+                <MuiLink
+                  component="button"
+                  onClick={() => handleLinkClick(link.path)}
+                  sx={{
+                    color: '#fff',
+                    textDecoration: 'none',
+                    fontSize: { xs: '0.85rem', sm: '0.9rem', md: '1rem' },
+                    fontWeight: 500,
+                    fontFamily: '"Lora", serif',
+                    position: 'relative',
+                    transition: 'all 0.3s ease',
+                    '&:hover': {
+                      color: '#ffcadd',
+                      transform: 'scale(1.05)',
+                    },
+                    '&::after': {
+                      content: '""',
+                      position: 'absolute',
+                      bottom: '-2px',
+                      left: '50%',
+                      width: '0',
+                      height: '2px',
+                      background: 'linear-gradient(45deg, #d81b60, #ffcadd)',
+                      transition: 'width 0.3s ease, left 0.3s ease',
+                    },
+                    '&:hover::after': {
+                      width: '100%',
+                      left: '0',
+                    },
+                  }}
+                >
+                  {link.text}
+                </MuiLink>
               </FooterListItem>
             ))}
           </FooterList>
@@ -236,17 +315,48 @@ const Footer = () => {
             {contactInfo.map((info, index) => (
               <FooterListItem key={index}>
                 {info.icon}
-                <Link href={info.href} target={info.target || '_self'} rel={info.target ? 'noopener noreferrer' : undefined}>
+                <MuiLink
+                  href={info.href}
+                  target={info.target || '_self'}
+                  rel={info.target ? 'noopener noreferrer' : undefined}
+                  sx={{
+                    color: '#fff',
+                    textDecoration: 'none',
+                    fontSize: { xs: '0.85rem', sm: '0.9rem', md: '1rem' },
+                    fontWeight: 500,
+                    fontFamily: '"Lora", serif',
+                    position: 'relative',
+                    transition: 'all 0.3s ease',
+                    '&:hover': {
+                      color: '#ffcadd',
+                      transform: 'scale(1.05)',
+                    },
+                    '&::after': {
+                      content: '""',
+                      position: 'absolute',
+                      bottom: '-2px',
+                      left: '50%',
+                      width: '0',
+                      height: '2px',
+                      background: 'linear-gradient(45deg, #d81b60, #ffcadd)',
+                      transition: 'width 0.3s ease, left 0.3s ease',
+                    },
+                    '&:hover::after': {
+                      width: '100%',
+                      left: '0',
+                    },
+                  }}
+                >
                   {info.text}
-                </Link>
+                </MuiLink>
               </FooterListItem>
             ))}
           </FooterList>
           <SocialIcons>
             {socialLinks.map((social, index) => (
-              <Link href={social.href} target="_blank" rel="noopener noreferrer" key={index}>
+              <MuiLink href={social.href} target="_blank" rel="noopener noreferrer" key={index}>
                 {social.icon}
-              </Link>
+              </MuiLink>
             ))}
           </SocialIcons>
         </FooterColumn>

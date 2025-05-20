@@ -23,7 +23,7 @@ const ContactLink = styled(MuiLink)`
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  text-decoration: none;
+  text-decoration: none !important ;
   color: #000000;
   background-color: #fff;
   padding: 0.75rem 1.5rem;

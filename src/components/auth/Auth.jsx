@@ -57,7 +57,6 @@ const AuthContainer = styled(Box)`
   overflow: hidden;
 `;
 
-
 const FormContainer = styled(Box)`
   background-color: #fff;
   padding: 2rem;
@@ -76,11 +75,10 @@ const FormContainer = styled(Box)`
   }
 
   @media (max-width: 400px) {
-    width: 100%; /* Более адаптивное решение */
-    margin-left: -60px; /* Убраны кавычки */
+    width: 100%;
+    margin-left: -60px;
   }
 `;
-
 
 const FormTitle = styled(Typography)`
   font-size: 1.8rem;
@@ -125,8 +123,8 @@ const SwitchLink = styled(MuiLink)`
 
 const HomeButton = styled(Button)`
   position: absolute;
-  top: -21rem;
-  left: -34rem;
+  top: -20rem;
+  left: -33rem;
   background-color: #d81b60;
   color: #fff;
   padding: 0.5rem 1rem;
@@ -141,7 +139,7 @@ const HomeButton = styled(Button)`
   z-index: 10;
 
   &:hover {
-    background-color: rgb(255, 210, 228);
+    background-color: #c2185b;
   }
 
   svg {
@@ -174,61 +172,52 @@ const Auth = () => {
     return true;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
     if (!validateInputs()) return;
 
+    setLoading(true);
     try {
-      setLoading(true);
+      const endpoint = isRegister ? '/api/register' : '/api/login';
+      const body = isRegister
+        ? { name: name.trim(), email: email.trim(), password }
+        : { email: email.trim(), password };
 
-      if (isRegister) {
-        // Check if user already exists
-        const existingUser = localStorage.getItem(`user_${email}`);
-        if (existingUser) {
-          setError('Bu email bilan foydalanuvchi mavjud');
-          setLoading(false);
-          return;
+      const response = await fetch(`http://localhost:5000${endpoint}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        // Store token and user data in localStorage
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('name', data.user.name);
+        localStorage.setItem('email', data.user.email);
+
+        if (isRegister) {
+          // Switch to login mode and prefill email
+          setIsRegister(false);
+          setName('');
+          setPassword('');
+          setError('Muvaffaqiyatli ro‘yxatdan o‘tdingiz! Endi kiring.');
+        } else {
+          // Navigate to cabinet after login
+          navigate('/cabinet');
         }
-
-        // Save new user data
-        const userData = { name, email, password };
-        localStorage.setItem(`user_${email}`, JSON.stringify(userData));
-        localStorage.setItem('token', `fakeToken_${email}_${Date.now()}`);
-        localStorage.setItem('name', name);
-        localStorage.setItem('email', email);
-
-        // Switch to login mode and prefill email
-        setIsRegister(false);
-        setName('');
-        setPassword('');
-        setError('Muvaffaqiyatli ro‘yxatdan o‘tdingiz! Endi kiring.');
       } else {
-        // Simulate login
-        const storedUser = localStorage.getItem(`user_${email}`);
-        if (!storedUser) {
-          setError('Foydalanuvchi topilmadi');
-          setLoading(false);
-          return;
-        }
-        const userData = JSON.parse(storedUser);
-        if (userData.password !== password) {
-          setError('Noto‘g‘ri parol');
-          setLoading(false);
-          return;
-        }
-        localStorage.setItem('token', `fakeToken_${email}_${Date.now()}`);
-        localStorage.setItem('name', userData.name);
-        localStorage.setItem('email', userData.email);
-
-        // Navigate to cabinet after successful login
-        setLoading(false);
-        navigate('/cabinet');
+        setError(data.error || 'Xatolik yuz berdi');
       }
     } catch (err) {
-      console.error('Local Storage Error:', err);
-      setError('Xatolik yuz berdi');
+      console.error(`${isRegister ? 'Register' : 'Login'} Error:`, err);
+      setError('Server bilan bog‘lanishda xatolik.');
+    } finally {
       setLoading(false);
     }
   };

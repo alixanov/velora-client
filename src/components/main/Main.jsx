@@ -16,38 +16,27 @@ const MainContainer = styled.div`
   flex-direction: column;
   font-family: 'Lora', serif;
   box-sizing: border-box;
-  overflow-x: hidden; /* Prevent horizontal scroll */
-
-  @media (max-width: 600px) {
-    padding: 1rem;
-    gap: 2rem;
-  }
-
-  @media (max-width: 400px) {
-    padding: 0.5rem;
-    gap: 1.5rem;
-  }
+  overflow-x: hidden;
 `;
 
 const SectionContainer = styled.div`
   width: 100%;
-  min-height: 100vh;
+  height: auto;
+  min-height: 80vh;
   box-sizing: border-box;
-  padding: 0 1rem;
+  margin: 0;
+  padding: 0;
 
   @media (max-width: 768px) {
-    min-height: 80vh;
-    padding: 0 0.5rem;
+    min-height: 70vh;
   }
 
   @media (max-width: 600px) {
-    min-height: 70vh;
-    padding: 0 0.5rem;
+    min-height: 60vh;
   }
 
   @media (max-width: 400px) {
-    min-height: 60vh;
-    padding: 0 0.25rem;
+    min-height: 50vh;
   }
 `;
 

@@ -26,13 +26,13 @@ const WorkSection = styled.section`
 `;
 
 const Title = styled(Typography)`
-  font-size: 2.8rem;
+  font-size: 3.8rem !important ;
   font-weight: 700;
   background: linear-gradient(45deg, #d81b60, #f06292);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  margin-bottom: 2rem;
+  margin-bottom: 2rem !important ;
   letter-spacing: 1px;
   text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.1);
   animation: fadeIn 0.8s ease-in-out;

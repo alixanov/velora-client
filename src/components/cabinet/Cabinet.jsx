@@ -1,27 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { Typography, Button, Box, AppBar, Toolbar, IconButton } from '@mui/material';
-import { ExitToApp, Email, Menu as MenuIcon } from '@mui/icons-material';
+import { Typography, Button, Box } from '@mui/material';
+import { ExitToApp, Email } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 
 const CabinetContainer = styled.div`
   display: flex;
   flex-direction: column;
-  min-height: 70vh;
+  min-height: 100vh;
   background: linear-gradient(180deg, #fff 0%, #f8bbd0 50%);
   font-family: 'Lora', serif;
-`;
-
-const Navbar = styled(AppBar)`
-  background-color: #d81b60;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-`;
-
-const NavbarContent = styled(Toolbar)`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem 2rem;
 `;
 
 const MainContent = styled.div`
@@ -103,14 +91,6 @@ const LogoutButton = styled(Button)`
   }
 `;
 
-const Footer = styled(Box)`
-  background-color: #d81b60;
-  color: #fff;
-  padding: 1rem;
-  text-align: center;
-  font-size: 0.9rem;
-`;
-
 const ErrorMessage = styled(Typography)`
   font-size: 1.3rem;
   color: #d81b60;
@@ -134,18 +114,50 @@ const Cabinet = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const storedName = localStorage.getItem('name');
-    const storedEmail = localStorage.getItem('email'); // Directly use stored email
-    const token = localStorage.getItem('token');
+    const validateToken = async () => {
+      const token = localStorage.getItem('token');
 
-    if (!token || !storedName || !storedEmail) {
-      setError('Sessiya tugagan. Iltimos, qayta kiring.');
-      navigate('/auth');
-      return;
-    }
+      if (!token) {
+        setError('Sessiya tugagan. Iltimos, qayta kiring.');
+        navigate('/auth');
+        return;
+      }
 
-    setName(storedName);
-    setEmail(storedEmail);
+      try {
+        const response = await fetch('http://localhost:5000/api/protected', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          // Store user data in localStorage and state
+          setName(data.user.name);
+          setEmail(data.user.email);
+          localStorage.setItem('name', data.user.name);
+          localStorage.setItem('email', data.user.email);
+        } else {
+          setError(data.error || 'Sessiya tugagan. Iltimos, qayta kiring.');
+          localStorage.removeItem('token');
+          localStorage.removeItem('name');
+          localStorage.removeItem('email');
+          navigate('/auth');
+        }
+      } catch (err) {
+        console.error('Token Validation Error:', err);
+        setError('Server bilan bog‘lanishda xatolik.');
+        localStorage.removeItem('token');
+        localStorage.removeItem('name');
+        localStorage.removeItem('email');
+        navigate('/auth');
+      }
+    };
+
+    validateToken();
   }, [navigate]);
 
   const handleLogout = () => {
